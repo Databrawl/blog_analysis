@@ -52,9 +52,8 @@ class BlogsSpider(scrapy.Spider):
         for i, url in enumerate(urls):
             parsed_url = urllib.parse.urlparse(url)
             rank = (page_num - 1) * page_size + i
-            print(rank, parsed_url.netloc)
             yield {
                 'rank': rank,
-                'url': parsed_url.netloc,
+                'url': f'{parsed_url.scheme}://{parsed_url.netloc}',
                 'query': query
             }
