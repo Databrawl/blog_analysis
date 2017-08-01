@@ -25,7 +25,7 @@ def get_top_languages(n, file_name):
     sorted_results = sorted(push_events, key=lambda x: int(x[2]),
                             reverse=True)
     languages = map(itemgetter(0), sorted_results)
-    return list(languages)
+    return list(languages)[:n]
 
 
 def get_top_blogs():
