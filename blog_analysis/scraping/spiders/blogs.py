@@ -33,7 +33,7 @@ class BlogsSpider(scrapy.Spider):
 
         query = urllib.parse.urlencode(query_params, doseq=True)
         url_template = urllib.parse.urlunparse(
-            ['https', 'cse.google.com', '/cse',
+            ['https', self.allowed_domains[0], '/cse',
              '', query, 'gsc.tab=0&gsc.q={query}&gsc.page={page_num}'])
         for query in self.queries:
             for page_num in range(1, 11):
@@ -54,6 +54,6 @@ class BlogsSpider(scrapy.Spider):
             rank = (page_num - 1) * page_size + i
             yield {
                 'rank': rank,
-                'url': f'{parsed_url.scheme}://{parsed_url.netloc}',
+                'url': parsed_url.netloc,
                 'query': query
             }
