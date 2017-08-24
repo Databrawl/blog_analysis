@@ -8,6 +8,10 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
 BOT_NAME = 'blog_analysis'
 
@@ -28,10 +32,14 @@ SPIDER_MIDDLEWARES = {
 DOWNLOADER_MIDDLEWARES = {
     'scrapy_splash.SplashCookiesMiddleware': 723,
     'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware':
+        810,
 }
 
-FEED_URI = 'file:///home/serge/Workspace/idea/python/databrawl/blog_analysis/feeds/%(name)s/%(time)s.json'
+FEED_DIR = os.path.join(ROOT_DIR, 'feeds')
+FEED_URI = f'file:///{FEED_DIR}/%(name)s/%(time)s.json'
+BLOGS_FEED_DIR = os.path.join(FEED_DIR, 'blogs')
+TRAFFIC_FEED_DIR = os.path.join(FEED_DIR, 'traffic')
 FEED_FORMAT = 'json'
 
 # Splash settings
