@@ -23,11 +23,12 @@ class TrafficSpider(scrapy.Spider):
 
     def parse(self, response):
         site_data = response.xpath('//div[@id="box_1"]/span/text()').extract()
-        if site_data:
+        views_data = list(filter(lambda r: '$' not in r, site_data))
+        if views_data:
             blog_data = response.meta.get('blog')
             traffic_data = {
-                'daily_page_views': site_data[1].translate({ord(','): None}),
-                'daily_visitors': site_data[2].translate({ord(','): None})
+                'daily_page_views': views_data[0].translate({ord(','): None}),
+                'daily_visitors': views_data[1].translate({ord(','): None})
             }
             blog_data.update(traffic_data)
             yield blog_data
