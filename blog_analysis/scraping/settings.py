@@ -52,3 +52,4 @@ DUPEFILTER_DEBUG = True
 # Other settings
 LANGUAGES_DATA = 'q4-2014.csv'
 TOP_LANGUAGES_FILE = 'top_languages.csv'
+ANALYSIS_DATA_DIR = os.path.join(ROOT_DIR, 'data')
