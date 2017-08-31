@@ -1,3 +1,5 @@
 Scrapy==1.4.0
 requests==2.18.1
 scrapy-splash==0.7.2
+bokeh==0.12.7
+pandas==0.20.3
