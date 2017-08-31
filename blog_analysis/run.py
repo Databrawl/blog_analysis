@@ -8,8 +8,10 @@ from operator import itemgetter
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
+from analysis import get_languages_popularity
 from scraping.spiders.blogs import BlogsSpider
 from scraping.spiders.traffic import TrafficSpider
+from vis import plot_table
 
 settings = get_project_settings()
 
@@ -63,14 +65,28 @@ def estimate_traffic():
     process.start()  # the script will block here until the crawling is done
 
 
+def analyze_data():
+    traffic_file = get_latest_file(settings['TRAFFIC_FEED_DIR'])
+    with open(traffic_file) as f:
+        data = json.load(f)
+    popularity = get_languages_popularity(data)
+    correlation_with_ranking = map(itemgetter('rank', 'daily_page_views'),
+                                   data)
+    file_name = os.path.join(settings['ANALYSIS_DATA_DIR'], 'popularity.png')
+    plot_table(popularity, file_name)
+    plot_table(correlation_with_ranking, file_name)
+
+
 if __name__ == '__main__':
     desc = 'Analyze and compare programming blogs traffic.'
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('spider', choices=['blogs', 'traffic'],
-                        help='Scrapy spider name to run.')
+    parser.add_argument('command', choices=['blogs', 'traffic', 'analyzer'],
+                        help='Command to run.')
 
     args = parser.parse_args()
-    if args.spider == 'blogs':
+    if args.command == 'blogs':
         get_top_blogs()
-    elif args.spider == 'traffic':
+    elif args.command == 'traffic':
         estimate_traffic()
+    elif args.command == 'analyzer':
+        analyze_data()
