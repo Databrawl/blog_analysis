@@ -43,8 +43,6 @@ class BlogsSpider(scrapy.Spider):
                                     args={'wait': 0.5})
 
     def parse(self, response):
-        if 'gsc.q=C' in str(response.request):
-            print('we found it!')
         urls = response.css('div.gs-title.gsc-table-cell-thumbnail') \
             .xpath('./a/@href').extract()
         gsc_fragment = urllib.parse.urlparse(response.url).fragment

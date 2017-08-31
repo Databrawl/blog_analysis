@@ -27,8 +27,8 @@ class TrafficSpider(scrapy.Spider):
         if views_data:
             blog_data = response.meta.get('blog')
             traffic_data = {
-                'daily_page_views': views_data[0].translate({ord(','): None}),
-                'daily_visitors': views_data[1].translate({ord(','): None})
+                'daily_page_views': int(views_data[0].translate({ord(','): None})),
+                'daily_visitors': int(views_data[1].translate({ord(','): None}))
             }
             blog_data.update(traffic_data)
             yield blog_data
