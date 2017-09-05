@@ -11,7 +11,7 @@ from scrapy.utils.project import get_project_settings
 from analysis import get_languages_popularity
 from scraping.spiders.blogs import BlogsSpider
 from scraping.spiders.traffic import TrafficSpider
-from vis import plot_table
+from vis import plot_bar_chart
 
 settings = get_project_settings()
 
@@ -72,9 +72,8 @@ def analyze_data():
     popularity = get_languages_popularity(data)
     correlation_with_ranking = map(itemgetter('rank', 'daily_page_views'),
                                    data)
-    file_name = os.path.join(settings['ANALYSIS_DATA_DIR'], 'popularity.png')
-    plot_table(popularity, file_name)
-    plot_table(correlation_with_ranking, file_name)
+    file_name = os.path.join(settings['ANALYSIS_DATA_DIR'], 'popularity.html')
+    plot_bar_chart(popularity, file_name)
 
 
 if __name__ == '__main__':

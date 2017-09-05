@@ -1,23 +1,14 @@
+from bkcharts.attributes import CatAttr
 from bokeh.charts import Bar, output_file, show
+from bokeh.models import NumeralTickFormatter
 
 
-def plot_table(table, file_name):
-    data = {
-        'sample': ['1st', '2nd', '1st', '2nd', '1st', '2nd'],
-        'interpreter': ['python', 'python', 'pypy', 'pypy', 'jython',
-                        'jython'],
-        'timing': [-2, 5, 12, 40, 22, 30]
-    }
+def plot_bar_chart(table, file_name):
+    bar = Bar(table, values='views', label=CatAttr(columns=['languages'],
+                                                   sort=False),
+              title='Programming Languages popularity', legend=False)
 
-    # x-axis labels pulled from the interpreter column, stacking labels from
-    #  sample column
-    bar = Bar(data, values='timing', label='interpreter', stack='sample',
-              agg='mean',
-              title="Python Interpreter Sampling", legend='top_right',
-              width=400)
+    bar.yaxis.formatter = NumeralTickFormatter(format="0.0a")
+    output_file(file_name)
 
-    p2 = Bar(table, title='Programming Languages popularity')
-
-    output_file("bar.html")
-
-    show(p2)
+    show(bar)
