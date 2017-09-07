@@ -8,10 +8,10 @@ from operator import itemgetter
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
-from analysis import get_languages_popularity
+from analysis import get_languages_popularity, get_ranking_and_views
 from scraping.spiders.blogs import BlogsSpider
 from scraping.spiders.traffic import TrafficSpider
-from vis import plot_bar_chart
+from vis import plot_scatter_charts
 
 settings = get_project_settings()
 
@@ -70,10 +70,15 @@ def analyze_data():
     with open(traffic_file) as f:
         data = json.load(f)
     popularity = get_languages_popularity(data)
-    correlation_with_ranking = map(itemgetter('rank', 'daily_page_views'),
-                                   data)
-    file_name = os.path.join(settings['ANALYSIS_DATA_DIR'], 'popularity.html')
-    plot_bar_chart(popularity, file_name)
+    popularity_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
+                                   'popularity.html')
+    # ranking_views = map(itemgetter('rank', 'daily_page_views'),
+    #                                data)
+    ranking_and_views = get_ranking_and_views(data)
+    ranking_views_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
+                                      'ranking_views.html')
+    # plot_bar_chart(popularity, popularity_file)
+    plot_scatter_charts(ranking_and_views, ranking_views_file)
 
 
 if __name__ == '__main__':
