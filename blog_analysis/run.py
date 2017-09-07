@@ -11,7 +11,7 @@ from scrapy.utils.project import get_project_settings
 from analysis import get_languages_popularity, get_ranking_and_views
 from scraping.spiders.blogs import BlogsSpider
 from scraping.spiders.traffic import TrafficSpider
-from vis import plot_scatter_charts
+from vis import plot_scatter_charts, plot_bar_chart
 
 settings = get_project_settings()
 
@@ -69,16 +69,20 @@ def analyze_data():
     traffic_file = get_latest_file(settings['TRAFFIC_FEED_DIR'])
     with open(traffic_file) as f:
         data = json.load(f)
+    # analyze popularity data
     popularity = get_languages_popularity(data)
     popularity_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
                                    'popularity.html')
-    # ranking_views = map(itemgetter('rank', 'daily_page_views'),
-    #                                data)
-    ranking_and_views = get_ranking_and_views(data)
+    plot_bar_chart(popularity, popularity_file)
+
+    # analyze ranking vs views
+    top_languages = get_top_languages(9, settings['LANGUAGES_DATA'])
+    ranking_and_views = get_ranking_and_views(data, top_languages)
     ranking_views_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
                                       'ranking_views.html')
-    # plot_bar_chart(popularity, popularity_file)
     plot_scatter_charts(ranking_and_views, ranking_views_file)
+
+    #TODO: adjust ranking vs views: remove severely deviated data
 
 
 if __name__ == '__main__':
