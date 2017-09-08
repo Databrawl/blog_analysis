@@ -8,7 +8,8 @@ from operator import itemgetter
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
-from analysis import get_languages_popularity, get_ranking_and_views
+from analysis import get_languages_popularity, get_ranking_and_views, \
+    filter_view_deviations
 from scraping.spiders.blogs import BlogsSpider
 from scraping.spiders.traffic import TrafficSpider
 from vis import plot_scatter_charts, plot_bar_chart
@@ -82,7 +83,11 @@ def analyze_data():
                                       'ranking_views.html')
     plot_scatter_charts(ranking_and_views, ranking_views_file)
 
-    #TODO: adjust ranking vs views: remove severely deviated data
+    # remove outlying values
+    filtered_ranking_and_views = filter_view_deviations(ranking_and_views)
+    ranking_views_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
+                                      'ranking_views_filtered.html')
+    plot_scatter_charts(filtered_ranking_and_views, ranking_views_file)
 
 
 if __name__ == '__main__':
