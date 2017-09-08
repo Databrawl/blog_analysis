@@ -1,8 +1,10 @@
+import numpy as np
 from bkcharts import Bar
 from bkcharts.attributes import CatAttr
 from bokeh.io import gridplot, output_file, show
 from bokeh.models import NumeralTickFormatter
 from bokeh.plotting import figure
+from scipy.stats.stats import pearsonr
 
 
 def plot_bar_chart(data, file_name):
@@ -27,8 +29,14 @@ def plot_scatter_charts(data, file_name):
     scatters = []
     for lang, values in data.items():
         s = figure(width=300, plot_height=300, title=lang)
-        s.circle(values[0], values[1], size=10, color="navy", alpha=0.5)
         s.yaxis.formatter = NumeralTickFormatter(format="0.0a")
+        s.circle(values[0], values[1], size=10, color="navy", alpha=0.5)
+        x = np.linspace(1, 100, 10)
+        # noinspection PyTupleAssignmentBalance
+        m, b = np.polyfit(values[0], values[1], 1)
+        y = m * x + b
+        corr_coef = round(pearsonr(values[0], values[1])[0], 1)
+        s.line(x, y, legend=f'PCC = {corr_coef}')
         scatters.append(s)
     split_scatters = split(scatters, 3)
     p = gridplot(split_scatters)
