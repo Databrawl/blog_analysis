@@ -1,10 +1,10 @@
+import os
+from operator import itemgetter
+
 import argparse
 import csv
 import glob
 import json
-import os
-from operator import itemgetter
-
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
@@ -50,7 +50,7 @@ def get_top_blogs():
 
 def get_latest_file(directory):
     list_of_files = glob.glob(os.path.join(directory, '*'))
-    latest_file = max(list_of_files, key=os.path.getctime)
+    latest_file = max(list_of_files, key=os.path.getmtime)
     return latest_file
 
 
