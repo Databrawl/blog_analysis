@@ -1,10 +1,10 @@
-import os
-from operator import itemgetter
-
 import argparse
 import csv
 import glob
 import json
+import os
+from operator import itemgetter
+
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 
@@ -70,24 +70,21 @@ def analyze_data():
     traffic_file = get_latest_file(settings['TRAFFIC_FEED_DIR'])
     with open(traffic_file) as f:
         data = json.load(f)
-    # analyze popularity data
-    popularity = get_languages_popularity(data)
+    # remove outlying values
+    filtered_data = filter_view_deviations(data)
+
+    # analyze popularity filtered_data
+    popularity = get_languages_popularity(filtered_data)
     popularity_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
                                    'popularity.html')
     plot_bar_chart(popularity, popularity_file)
 
     # analyze ranking vs views
     top_languages = get_top_languages(9, settings['LANGUAGES_DATA'])
-    ranking_and_views = get_ranking_and_views(data, top_languages)
+    ranking_and_views = get_ranking_and_views(filtered_data, top_languages)
     ranking_views_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
                                       'ranking_views.html')
     plot_scatter_charts(ranking_and_views, ranking_views_file)
-
-    # remove outlying values
-    filtered_ranking_and_views = filter_view_deviations(ranking_and_views)
-    ranking_views_file = os.path.join(settings['ANALYSIS_DATA_DIR'],
-                                      'ranking_views_filtered.html')
-    plot_scatter_charts(filtered_ranking_and_views, ranking_views_file)
 
 
 if __name__ == '__main__':

@@ -4,6 +4,30 @@ from operator import itemgetter
 from utils import outlier_threshold
 
 
+def filter_view_deviations(data):
+    """
+    Delete URLs with amount of views significantly deviating from
+    the mean value of views for given language.
+
+    :param data: list of dicts with URLs and their daily views
+    :return: filtered data
+    """
+    query_sorted_data = sorted(data, key=itemgetter('query'))
+    result = []
+    for k, group in groupby(query_sorted_data, key=itemgetter('query')):
+        group = list(group)
+        daily_page_views = [elem['daily_page_views'] for elem in group]
+        threshold = outlier_threshold(daily_page_views)
+        filtered_data = filter(lambda p: p['daily_page_views'] <= threshold,
+                               group)
+        filtered_data = list(filtered_data)
+        for elem in filtered_data:
+            if elem['daily_page_views'] > 1000000:
+                print(elem['url'], 'is huge!')
+        result.extend(filtered_data)
+    return result
+
+
 def get_languages_popularity(data):
     """
     Count total daily views for all languages and sort in descending order.
@@ -42,24 +66,4 @@ def get_ranking_and_views(data, languages):
                             for r in group]
         ranks, views = zip(*ranks_views_data)
         result[group[0]['query']] = ranks, views
-    return result
-
-
-def filter_view_deviations(data):
-    """
-    Delete rank/views pairs with amount of views significantly deviating from
-    the mean value of views.
-
-    :param data: dict of language:data key/value pairs
-    :return: dict of language:data key/value pairs without certain rank,view
-        points
-    """
-    result = {}
-    for lang, ranks_views in data.items():
-        threshold = outlier_threshold(ranks_views[1])
-        rank_view_pairs = zip(*ranks_views)
-        filtered_rank_view_pairs = filter(lambda p: p[1] <= threshold,
-                                          rank_view_pairs)
-        ranks, views = zip(*filtered_rank_view_pairs)
-        result[lang] = ranks, views
     return result
